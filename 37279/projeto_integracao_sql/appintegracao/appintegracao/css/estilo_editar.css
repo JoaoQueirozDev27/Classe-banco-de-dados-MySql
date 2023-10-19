@@ -1,0 +1,48 @@
+﻿body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 98.3vh;
+    background-image: linear-gradient(135deg,#0094ff,#00bdab);
+    background-size: 500%;
+    animation: mudar_background ease-in-out 5s infinite alternate;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    padding: 1vw;
+    border: 5px solid black;
+    border-radius: 20px;
+    box-shadow: black 10px 10px;
+}
+
+
+.botao {
+    background-color: black;
+    color: white;
+    width: 50%;
+    margin: auto;
+    padding: 4px;
+    border-color: transparent;
+    border-radius: 20px;
+}
+
+.caixa_texto {
+    padding: 4px;
+    border-color: transparent;
+    border-radius: 20px;
+}
+
+@keyframes mudar_background {
+    from {
+        background-position-x: 0;
+        background-position-y: 0;
+    }
+
+    to {
+        background-position-x: 100%;
+        background-position-y: 100%;
+    }
+}

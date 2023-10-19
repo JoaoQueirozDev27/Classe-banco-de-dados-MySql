@@ -1,0 +1,66 @@
+﻿body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 98.3vh;
+    background-image: linear-gradient(135deg,#009bc6,#00c191,#009bc6);
+    background-size: 600%;
+    animation: mudar_background ease-in-out 6s infinite alternate;
+}
+
+:root{
+    --tamanho_coluna--:90px;
+}
+
+a{
+    color:white;
+    text-decoration:none;
+}
+
+#tabela_produtos {
+    background-color: transparent;
+    border: 4px solid black;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-collapse: unset;
+    border-spacing: 0;
+}
+
+    #tabela_produtos tr th {
+        padding: 0;
+        margin: 0;
+
+        background-color: black;
+        color: white;
+        width: var(--tamanho_coluna--);
+    }
+
+    #tabela_produtos tr td {
+        text-align: center;
+        width: var(--tamanho_coluna--);
+    }
+
+section {
+    display: flex;
+    justify-content: space-around;
+    background-color: black;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+img {
+    height:20%;
+    width:30%;
+}
+
+@keyframes mudar_background {
+    from {
+        background-position-x: 0;
+        background-position-y: 0;
+    }
+
+    to {
+        background-position-x: 100%;
+        background-position-y: 100%;
+    }
+}
