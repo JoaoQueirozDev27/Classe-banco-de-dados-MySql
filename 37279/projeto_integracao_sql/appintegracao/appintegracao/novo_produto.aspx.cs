@@ -11,18 +11,16 @@ namespace appintegracao
     public partial class novo_produto : System.Web.UI.Page
     {
         Banco_dados bd = new Banco_dados();
+        string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
         protected void Page_Load(object sender, EventArgs e)
         {
             #region pegar maior código,somar 1 e adicionar a textbox
-            
-            string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-            bd.linha_conexao = linhaConexao;
+            bd.conectar(linhaConexao);
             MySqlDataReader dados = null;
 
             int maior_codigo;
 
-            try
-            {
+            try{
                 string comando = "select max(cd_produto) from produto";
                 dados = bd.cmd_select(comando);
                 while (dados.Read())
@@ -37,16 +35,15 @@ namespace appintegracao
             }
             finally
             {
-                if (!dados.IsClosed)
-                {
-                    dados.Close();
-                }
+                bd.desconectar();
             }
             #endregion
         }
 
         protected void BtnSalvar_Click(object sender, EventArgs e)
         {
+            bd.conectar(linhaConexao);
+
             if (String.IsNullOrEmpty(TxtNome.Text))
             {
                 Response.Write("<script>alert('Preencha o nome do produto')</script>");
@@ -68,7 +65,8 @@ namespace appintegracao
             } 
             catch 
             { 
-                Response.Write("<script>alert('Nao digite letras no valor')</script>"); 
+                Response.Write("<script>alert('Nao digite letras no valor')</script>");
+                bd.desconectar();
                 return; 
             }
             #region pegar dados das TextBox
@@ -80,6 +78,7 @@ namespace appintegracao
             #region adicionar dados 
             try
             {
+                    bd.conectar(linhaConexao);
                     string comando = $"insert into produto values({double.Parse(TxtCodigo.Text)},'{nome}',{valor.ToString("#.##").Replace(",",".")})";
                     bd.cmd_ns(comando);
                     Response.Write("<script>alert('Produto adicionado com sucesso')</script>");
@@ -90,7 +89,7 @@ namespace appintegracao
                 catch
                 {
                     Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
-
+                    bd.desconectar();
                     return;
                 }
             #endregion

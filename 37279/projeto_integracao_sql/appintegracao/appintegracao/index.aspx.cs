@@ -14,7 +14,7 @@ namespace appintegracao
         {
             string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
             Banco_dados bd = new Banco_dados();
-            bd.linha_conexao = linhaConexao;
+            bd.conectar(linhaConexao);
 
             string codigo_exclusao = Request["codigo"];
 
@@ -64,15 +64,13 @@ namespace appintegracao
             catch
             {
                 litdados_tabela.Text = "Não foi possível conectar ao Servidor";
+                bd.desconectar();
                 return;
             }
 
             finally
             {
-                if (!dados.IsClosed)
-                {
-                    dados.Close();
-                }
+                bd.desconectar();
             }
         }
     }

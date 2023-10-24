@@ -14,7 +14,7 @@ namespace appintegracao
         string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
         protected void Page_Load(object sender, EventArgs e)
         {
-            bd.linha_conexao = linhaConexao;
+            bd.conectar(linhaConexao);
             if (!IsPostBack)
             {
                 string codigo = Request["codigo"];
@@ -37,15 +37,13 @@ namespace appintegracao
 
                 catch
                 {
+                    bd.desconectar();
                     return;
                 }
 
                 finally
                 {
-                    if (!dados.IsClosed)
-                    {
-                        dados.Close();
-                    }
+                    bd.desconectar();
                 }
             }
             
@@ -53,6 +51,7 @@ namespace appintegracao
 
         protected void BtnSalvar_Click(object sender, EventArgs e)
         {
+            bd.conectar(linhaConexao);
             try
             {
                 double.Parse(TxtValor.Text.Replace(",", "."));
@@ -68,8 +67,6 @@ namespace appintegracao
             double valor = double.Parse(TxtValor.Text);
             #endregion 
 
-            string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-
             #region adicionar dados 
             try
             {
@@ -83,8 +80,10 @@ namespace appintegracao
             catch
             {
                 Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
+                bd.desconectar();
                 return;
             }
+            finally { bd.desconectar(); }
             #endregion
         }
 

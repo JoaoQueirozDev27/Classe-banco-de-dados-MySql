@@ -15,7 +15,7 @@ namespace appintegracao
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            bd.linha_conexao = linhaConexao;
+            bd.conectar(linhaConexao);
 
             if (!IsPostBack)
             {
@@ -39,21 +39,20 @@ namespace appintegracao
 
                 catch
                 {
+                    bd.desconectar();
                     return;
                 }
 
                 finally
                 {
-                    if (!dados.IsClosed)
-                    {
-                        dados.Close();
-                    }
+                    bd.desconectar();
                 }
             }
         }
 
         protected void BtnSalvar_Click1(object sender, EventArgs e)
         {
+            bd.conectar(linhaConexao);
             try
             {
                 double.Parse(TxtValor.Text.Replace(",", "."));
@@ -69,20 +68,21 @@ namespace appintegracao
             double valor = double.Parse(TxtValor.Text);
             #endregion 
 
-            string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
             #region adicionar dados 
-            try
-            {
-                string comando = $"Delete from produto where cd_produto = {TxtCodigo.Text};";
-                bd.cmd_ns(comando);
-                Response.Write("<script>alert('Operação realizada com sucesso')</script>");
-                Response.Redirect("index.aspx");
-            }
-            catch
-            {
-                Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
-                return;
-            }
+                try
+                {
+                    string comando = $"Delete from produto where cd_produto = {TxtCodigo.Text};";
+                    bd.cmd_ns(comando);
+                    Response.Write("<script>alert('Operação realizada com sucesso')</script>");
+                    Response.Redirect("index.aspx");
+                }
+                catch
+                {
+                    Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
+                    bd.desconectar();
+                    return;
+                }
+                finally { bd.desconectar(); }
             #endregion
         }
 
