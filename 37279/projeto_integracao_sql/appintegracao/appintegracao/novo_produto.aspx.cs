@@ -10,46 +10,36 @@ namespace appintegracao
 {
     public partial class novo_produto : System.Web.UI.Page
     {
+        Banco_dados bd = new Banco_dados();
         protected void Page_Load(object sender, EventArgs e)
         {
-
             #region pegar maior código,somar 1 e adicionar a textbox
+            
             string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-            MySqlConnection conexao = new MySqlConnection(linhaConexao); //Instanciamento
+            bd.linha_conexao = linhaConexao;
             MySqlDataReader dados = null;
 
             int maior_codigo;
 
             try
             {
-                conexao.Open();
                 string comando = "select max(cd_produto) from produto";
-                MySqlCommand cSQL = new MySqlCommand(comando, conexao);
-                dados = cSQL.ExecuteReader();
+                dados = bd.cmd_select(comando);
                 while (dados.Read())
                 {
                     maior_codigo = dados.GetInt32(0);
                     TxtCodigo.Text = (maior_codigo + 1).ToString();
                 }
-
             }
-
-
             catch
             {
                 return;
             }
-
             finally
             {
                 if (!dados.IsClosed)
                 {
                     dados.Close();
-                }
-
-                if (conexao.State == System.Data.ConnectionState.Open)
-                {
-                    conexao.Close();
                 }
             }
             #endregion
@@ -72,9 +62,6 @@ namespace appintegracao
                 Response.Write("<script>alert('Preencha o nome do valor')</script>");
                 return;
             }
-
-            string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-            MySqlConnection conexao = new MySqlConnection(linhaConexao); //Instanciamento
             try 
             { 
                 double.Parse(TxtValor.Text.Replace(",", ".")); 
@@ -93,10 +80,8 @@ namespace appintegracao
             #region adicionar dados 
             try
             {
-                    conexao.Open();
                     string comando = $"insert into produto values({double.Parse(TxtCodigo.Text)},'{nome}',{valor.ToString("#.##").Replace(",",".")})";
-                    MySqlCommand cSQL = new MySqlCommand(comando, conexao);
-                    cSQL.ExecuteNonQuery();
+                    bd.cmd_ns(comando);
                     Response.Write("<script>alert('Produto adicionado com sucesso')</script>");
                     Response.Redirect("index.aspx");
             }
@@ -107,16 +92,6 @@ namespace appintegracao
                     Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
 
                     return;
-                }
-
-                finally
-                {
-
-                    if (conexao.State == System.Data.ConnectionState.Open)
-                    {
-                        conexao.Close();
-                    }
-                    
                 }
             #endregion
 

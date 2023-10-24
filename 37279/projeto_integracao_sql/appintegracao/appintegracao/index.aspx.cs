@@ -12,9 +12,9 @@ namespace appintegracao
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
+            string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
             Banco_dados bd = new Banco_dados();
-            bd.nome_banco = "integracao";
+            bd.linha_conexao = linhaConexao;
 
             string codigo_exclusao = Request["codigo"];
 
@@ -40,12 +40,13 @@ namespace appintegracao
                     Response.Redirect("index.aspx");
                 }
             }
-
+            
+            MySqlDataReader dados = null;
             try
             {
                 
                 string comando = "select * from produto";
-                MySqlDataReader dados = bd.cmd_select(comando);
+                dados = bd.cmd_select(comando);
 
                 while (dados.Read())
                 {
@@ -66,22 +67,13 @@ namespace appintegracao
                 return;
             }
 
-            //finally
-            //{
-            //    if (!dados.IsClosed)
-            //    {
-            //        dados.Close();
-            //    }
-
-            //    if (conexao.State == System.Data.ConnectionState.Open)
-            //    {
-            //        conexao.Close();
-            //    }
-            //}
-
-           
-
-
+            finally
+            {
+                if (!dados.IsClosed)
+                {
+                    dados.Close();
+                }
+            }
         }
     }
 }

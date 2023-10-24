@@ -10,22 +10,20 @@ namespace appintegracao
 {
     public partial class editar : System.Web.UI.Page
     {
+        Banco_dados bd = new Banco_dados();
+        string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
         protected void Page_Load(object sender, EventArgs e)
         {
+            bd.linha_conexao = linhaConexao;
             if (!IsPostBack)
             {
                 string codigo = Request["codigo"];
-
-                string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-                MySqlConnection conexao = new MySqlConnection(linhaConexao); //Instanciamento
                 MySqlDataReader dados = null;
 
                 try
                 {
-                    conexao.Open();
                     string comando = $"select * from produto where cd_produto = {codigo}";
-                    MySqlCommand cSQL = new MySqlCommand(comando, conexao);
-                    dados = cSQL.ExecuteReader();
+                    dados = bd.cmd_select(comando);   
                     while (dados.Read())
                     {
                         TxtCodigo.Text = dados.GetString(0);
@@ -47,11 +45,6 @@ namespace appintegracao
                     if (!dados.IsClosed)
                     {
                         dados.Close();
-                    }
-
-                    if (conexao.State == System.Data.ConnectionState.Open)
-                    {
-                        conexao.Close();
                     }
                 }
             }
@@ -76,15 +69,12 @@ namespace appintegracao
             #endregion 
 
             string linhaConexao = "SERVER=localhost;UID=root;PASSWORD=root;DATABASE=integracao;";
-            MySqlConnection conexao = new MySqlConnection(linhaConexao); //Instanciamento
 
             #region adicionar dados 
             try
             {
-                conexao.Open();
                 string comando = $"Update produto set nm_produto ='{nome}',vl_produto ={valor.ToString("#.##").Replace(",",".")} where cd_produto = {TxtCodigo.Text};";
-                MySqlCommand cSQL = new MySqlCommand(comando, conexao);
-                cSQL.ExecuteNonQuery();
+                bd.cmd_ns(comando);
                 Response.Write("<script>alert('Foi')</script>");
                 Response.Redirect("index.aspx");
             }
@@ -94,16 +84,6 @@ namespace appintegracao
             {
                 Response.Write("<script>alert('Não foi possível conectar ao servidor')</script>");
                 return;
-            }
-
-            finally
-            {
-
-                if (conexao.State == System.Data.ConnectionState.Open)
-                {
-                    conexao.Close();
-                }
-                
             }
             #endregion
         }
